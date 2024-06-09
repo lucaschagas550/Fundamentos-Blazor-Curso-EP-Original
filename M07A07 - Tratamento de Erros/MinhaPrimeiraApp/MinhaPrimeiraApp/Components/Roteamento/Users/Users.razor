@@ -1,0 +1,38 @@
+﻿@page "/users"
+@inject IUserService UserService
+
+<h1>Perfil do Usuário</h1>
+
+<h2>Lista de Usuários</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var myuser in users)
+    {
+        <tr>
+            <td>@myuser.Id</td>
+            <td>@myuser.Name</td>
+            <td>@myuser.Email</td>
+            <td><NavLink href=@($"/users/{@myuser.Id}")>Detalhes</NavLink></td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+@code {
+   
+    private List<User> users;
+
+    protected override async Task OnInitializedAsync()
+    {
+        users = await UserService.GetAllUsersAsync();
+    }
+}

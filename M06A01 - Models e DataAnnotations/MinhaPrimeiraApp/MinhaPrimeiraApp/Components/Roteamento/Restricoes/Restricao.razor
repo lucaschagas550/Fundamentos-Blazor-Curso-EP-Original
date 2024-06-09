@@ -1,0 +1,36 @@
+﻿@page "/restricao-rota1/{id:int}/{option:bool?}"
+@page "/restricao-rota2/{uid:guid}"
+
+
+<h3>@Mensagem</h3>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    [Parameter]
+    public bool Option { get; set; }
+
+    [Parameter]
+    public Guid Uid { get; set; }
+
+    public string Mensagem { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        Mensagem = $"{Id} - {Option} - {Uid}";
+    }
+}
+
+@*
+
+bool	        {active:bool}	
+datetime	    {dob:datetime}	
+decimal	        {price:decimal}	
+double	        {weight:double}
+float	        {weight:float}	
+guid	        {id:guid}		
+int	            {id:int}	
+long	        {ticks:long}	
+
+*@

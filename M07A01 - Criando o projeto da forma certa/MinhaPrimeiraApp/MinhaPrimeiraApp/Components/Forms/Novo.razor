@@ -1,0 +1,81 @@
+﻿@page "/produtos/novo"
+@inject MinhaPrimeiraApp.Data.PrimeiraAppContext DB
+@inject NavigationManager NavigationManager
+
+<PageTitle>Novo Produto</PageTitle>
+
+<h1>Novo Produto</h1>
+
+<hr />
+
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="Produto" OnValidSubmit="AddProduto" FormName="novo" Enhance>
+            
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" />
+            
+            <div class="mb-3">
+                <label for="nome" class="form-label">Nome:</label> 
+                <InputText id="nome" @bind-Value="Produto.Nome" class="form-control" /> 
+                <ValidationMessage For="() => Produto.Nome" class="text-danger" /> 
+            </div>        
+            
+            <div class="mb-3">
+                <label for="descricao" class="form-label">Descricao:</label> 
+                <InputText id="descricao" @bind-Value="Produto.Descricao" class="form-control" /> 
+                <ValidationMessage For="() => Produto.Descricao" class="text-danger" /> 
+            </div>        
+            
+            <div class="mb-3">
+                <label for="categoria" class="form-label">Categoria:</label> 
+                <InputText id="categoria" @bind-Value="Produto.Categoria" class="form-control" /> 
+                <ValidationMessage For="() => Produto.Categoria" class="text-danger" /> 
+            </div>        
+            
+            <div class="mb-3">
+                <label for="preco" class="form-label">Preco:</label> 
+                <InputNumber id="preco" @bind-Value="Produto.Preco" class="form-control" /> 
+                <ValidationMessage For="() => Produto.Preco" class="text-danger" /> 
+            </div>        
+            
+            <div class="mb-3">
+                <label for="disponivelestoque" class="form-label">DisponivelEstoque:</label> 
+                <InputCheckbox id="disponivelestoque" @bind-Value="Produto.DisponivelEstoque" class="form-check-input" /> 
+                <ValidationMessage For="() => Produto.DisponivelEstoque" class="text-danger" /> 
+            </div>        
+            
+            <div class="mb-3">
+                <label for="datavalidade" class="form-label">DataValidade:</label> 
+                <InputDate id="datavalidade" @bind-Value="Produto.DataValidade" class="form-control" /> 
+                <ValidationMessage For="() => Produto.DataValidade" class="text-danger" /> 
+            </div>        
+            
+            <div class="mb-3">
+                <label for="corselecionada" class="form-label">CorSelecionada:</label> 
+                <InputText id="corselecionada" @bind-Value="Produto.CorSelecionada" class="form-control" /> 
+                <ValidationMessage For="() => Produto.CorSelecionada" class="text-danger" /> 
+            </div>        
+            
+            <button type="submit" class="btn btn-primary">Create</button>
+
+        </EditForm>
+    </div>
+</div>
+
+<div style="padding-bottom:50px">
+    <a href="/produtos">Back to List</a>
+</div>
+
+@code {
+
+    [SupplyParameterFromForm]
+    public Produto Produto { get; set; } = new();
+
+    public async Task AddProduto()
+    {
+        DB.Produto.Add(Produto);
+        await DB.SaveChangesAsync();
+        NavigationManager.NavigateTo("/produtos");
+    }
+}

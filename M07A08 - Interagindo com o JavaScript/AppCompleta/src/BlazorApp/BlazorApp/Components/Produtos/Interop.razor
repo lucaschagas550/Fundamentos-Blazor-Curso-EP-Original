@@ -1,0 +1,39 @@
+﻿@page "/interop"
+@rendermode InteractiveServer
+@inject IJSRuntime JS
+
+<h3>Chamar JavaScript através do Blazor</h3>
+<button class="btn btn-primary" @onclick="@(() => CallJS("showJavaScriptAlert", "Olá Eduardo!"))">
+    Chamar JS</button>
+
+<h3>Chamar .NET através do JS</h3>
+<button class="btn btn-primary" @onclick="@(() => CallJS("callDotNetFromJS", "Olá Eduardo!"))">
+    Chamar JS > NET
+</button>
+
+<script>
+    function showJavaScriptAlert(mensagem) {
+        alert(mensagem);
+    }
+
+    function callDotNetFromJS(mensagem) {
+        DotNet.invokeMethodAsync('BlazorApp', 'CallDotNet', mensagem)
+            .then(data => console.log(data));
+    }
+</script>
+
+@code {
+
+    private async Task CallJS(string metodo, string mensagem)
+    {
+        await JS.InvokeAsync<string>(metodo, mensagem);
+    }
+
+    [JSInvokable]
+    public static string CallDotNet(string mensagem)
+    {
+        Console.WriteLine(mensagem);
+
+        return "Executado com sucesso!";
+    }
+}

@@ -1,0 +1,28 @@
+﻿@page "/users/{Id}"
+@inject IUserService UserService
+
+<h1>Perfil do Usuário</h1>
+
+@if (user == null)
+{
+    <p><em>Carregando...</em></p>
+}
+else
+{
+    <div>
+        <p>Nome: @user.Name</p>
+        <p>Email: @user.Email</p>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private User user;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        user = await UserService.GetUserByIdAsync(Id);
+    }
+}

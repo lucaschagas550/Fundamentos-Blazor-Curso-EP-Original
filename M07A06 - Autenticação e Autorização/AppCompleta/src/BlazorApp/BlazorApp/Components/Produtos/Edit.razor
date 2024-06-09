@@ -1,0 +1,128 @@
+﻿@page "/produtos/editar/{id:int}"
+@attribute [Authorize]
+
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.EntityFrameworkCore
+@using AppCompleta.Components.Produtos
+
+@inject NavigationManager NavigationManager
+@inject BlazorApp.Data.ApplicationDbContext DB
+
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit</h1>
+
+<h4>Produto</h4>
+<hr />
+@if (Produto is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="Produto" OnValidSubmit="UpdateProduto" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <input type="hidden" name="Produto.Id" value="@Produto.Id" />
+
+                <div class="mb-3">
+                    <label for="nome" class="form-label">Nome:</label>
+                    <InputText id="nome" @bind-Value="Produto.Nome" class="form-control" />
+                    <ValidationMessage For="() => Produto.Nome" class="text-danger" />
+                </div>
+                
+                <div class="mb-3">
+                    <label for="descricao" class="form-label">Descricao:</label>
+                    <InputText id="descricao" @bind-Value="Produto.Descricao" class="form-control" />
+                    <ValidationMessage For="() => Produto.Descricao" class="text-danger" />
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">
+                        Categoria:
+                        <InputSelect class="form-select" @bind-Value="Produto!.Categoria">
+                            <option value="">Selecione uma categoria...</option>
+                            @foreach (var categoria in Categorias)
+                            {
+                                <option value="@categoria">@categoria</option>
+                            }
+                        </InputSelect>
+                    </label>
+                </div>
+               
+                <div class="mb-3">
+                    <label for="preco" class="form-label">Preco:</label>
+                    <InputNumber id="preco" @bind-Value="Produto.Preco" class="form-control" />
+                    <ValidationMessage For="() => Produto.Preco" class="text-danger" />
+                </div>
+                
+                <div class="mb-3">
+                    <label for="disponivelestoque" class="form-label">DisponivelEstoque:</label>
+                    <InputCheckbox id="disponivelestoque" @bind-Value="Produto.DisponivelEstoque" class="form-check-input" />
+                    <ValidationMessage For="() => Produto.DisponivelEstoque" class="text-danger" />
+                </div>
+                
+                <div class="mb-3">
+                    <label for="datavalidade" class="form-label">DataValidade:</label>
+                    <InputDate id="datavalidade" @bind-Value="Produto.DataValidade" class="form-control" />
+                    <ValidationMessage For="() => Produto.DataValidade" class="text-danger" />
+                </div>
+
+                <button type="submit" class="btn btn-primary">Salvar</button>&nbsp;
+                <a class="btn btn-warning" href="/produtos">Voltar</a>
+
+            </EditForm>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    [SupplyParameterFromForm]
+    public Produto? Produto { get; set; }
+
+    private readonly List<string> Categorias = new() { "Eletrônicos", "Vestuário", "Alimentos" };
+
+    protected override async Task OnInitializedAsync()
+    {
+        Produto ??= await DB.Produto.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (Produto is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    public async Task UpdateProduto()
+    {
+        DB.Attach(Produto!).State = EntityState.Modified;
+
+        try
+        {
+            await DB.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!ProdutoExists(Produto!.Id))
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/produtos");
+    }
+
+    bool ProdutoExists(int id)
+    {
+        return DB.Produto.Any(e => e.Id == id);
+    }
+}

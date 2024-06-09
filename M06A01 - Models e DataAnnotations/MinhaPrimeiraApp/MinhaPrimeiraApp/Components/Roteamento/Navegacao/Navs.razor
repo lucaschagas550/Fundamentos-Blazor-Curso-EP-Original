@@ -1,0 +1,48 @@
+﻿@page "/navegacao"
+@rendermode InteractiveServer
+
+@inject NavigationManager Navigation
+
+<NavLink Match="NavLinkMatch.All" ActiveClass="text-danger" href="navegacao">NavLink</NavLink>
+
+<NavLink ActiveClass="text-danger" href="sample">NavLink</NavLink>
+
+<a href="sample">HTML</a>
+
+<br />
+<br />
+
+<a class="btn btn-danger" @onclick="Clicou">Não Clique Aqui</a>
+
+<br />
+<br />
+
+@cUri
+
+<br />
+
+@cBaseUri
+
+@code {
+
+    string cUri;
+    string cBaseUri;
+
+    protected override void OnInitialized()
+    {
+        cUri = Navigation.Uri;
+        cBaseUri = Navigation.BaseUri;
+
+        Navigation.LocationChanged += HandleLocationChanged;
+    }
+
+    private void Clicou()
+    {
+        Navigation.NavigateTo("/sample");
+    }
+
+    private void HandleLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        Console.WriteLine($"Estamos indo para: {e.Location}");
+    }
+}

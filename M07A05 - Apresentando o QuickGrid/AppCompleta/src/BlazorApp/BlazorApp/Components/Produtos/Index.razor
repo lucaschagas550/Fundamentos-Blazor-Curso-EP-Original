@@ -1,0 +1,44 @@
+﻿@page "/produtos"
+
+@using AppCompleta.Components.Produtos
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using System.Globalization
+
+@inject BlazorApp.Data.ApplicationDbContext DB
+
+<PageTitle>Produtos</PageTitle>
+
+<h1>Produtos</h1>
+<hr />
+
+<p>
+    <a class="btn btn-primary" href="produtos/novo"><spam class="fa fa-plus"></spam> Novo Produto</a>
+</p>
+
+<QuickGrid Class="table" Items="DB.Produto">
+    <PropertyColumn Align="Align.Center" Property="produto => produto.Nome"  />
+    <PropertyColumn Align="Align.Center" Property="produto => produto.Categoria" />
+    
+    <TemplateColumn Align="Align.Center" Context="produto" Title="Preço">
+        @produto.Preco.ToString("C", new CultureInfo("pt-BR"))
+    </TemplateColumn>
+
+    <TemplateColumn Align="Align.Center" Context="produto" Title="Disponível">
+        @if (produto.DisponivelEstoque)
+        {
+            <i class="fa-solid fa-check"></i>
+        }
+        else
+        {
+            <i class="fa-solid fa-x"></i>
+        }
+    </TemplateColumn>
+
+    <PropertyColumn Align="Align.Center" Property="produto => produto.DataValidade" Format="dd-MM-yyyy" Title="Data de Validade" />
+
+    <TemplateColumn Align="Align.Center" Context="produto">
+        <a class="btn btn-info" href="@($"produtos/detalhes/{produto.Id}")"><spam class="fa fa-search"></spam></a>
+        <a class="btn btn-warning" href="@($"produtos/editar/{produto.Id}")"><spam class="fa fa-pencil-alt"></spam></a>
+        <a class="btn btn-danger" href="@($"produtos/excluir/{produto.Id}")"><spam class="fa fa-trash"></spam></a>
+    </TemplateColumn>
+</QuickGrid>
